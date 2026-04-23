@@ -1,0 +1,115 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: techvsoc-postgres
+    environment:
+      POSTGRES_DB: techvsoc_xdr
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d techvsoc_xdr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - techvsoc
+
+  redis:
+    image: redis:7-alpine
+    container_name: techvsoc-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - techvsoc
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: techvsoc-backend
+    environment:
+      APP_NAME: "TechvSOC XDR Platform"
+      APP_ENV: "production"
+      DEBUG: "false"
+      API_V1_PREFIX: "/api/v1"
+      HOST: "0.0.0.0"
+      PORT: "8000"
+
+      # ✅ FIXED (this was your crash)
+      ALLOWED_ORIGINS: '["http://localhost","http://127.0.0.1"]'
+
+      DATABASE_URL: "postgresql+psycopg2://postgres:postgres@postgres:5432/techvsoc_xdr"
+      REDIS_URL: "redis://redis:6379/0"
+
+      SECRET_KEY: "change-this-in-production"
+      JWT_ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "60"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    ports:
+      - "8000:8000"
+
+    networks:
+      - techvsoc
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+      args:
+        VITE_API_BASE_URL: /api/v1
+    container_name: techvsoc-nginx
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - techvsoc
+
+  agent:
+    build:
+      context: .
+      dockerfile: agent/Dockerfile
+    container_name: techvsoc-agent
+    profiles: ["agent"]
+    environment:
+      TECHVSOC_AGENT_NAME: "TechvSOC XDR Platform Agent"
+      TECHVSOC_AGENT_BACKEND_URL: "http://backend:8000/api/v1"
+      TECHVSOC_AGENT_TOKEN: "replace-with-token"
+      TECHVSOC_AGENT_INTERVAL_SECONDS: "30"
+      TECHVSOC_AGENT_LOG_INTERVAL_SECONDS: "60"
+      TECHVSOC_AGENT_VERSION: "1.0.0"
+      TECHVSOC_AGENT_DEFAULT_LOG_SOURCE: "endpoint-agent"
+      TECHVSOC_AGENT_LOG_FILES: "/host_logs/syslog,/host_logs/auth.log"
+      TECHVSOC_AGENT_STATE_PATH: "/var/lib/techvsoc-agent/.agent-state.json"
+    volumes:
+      - agent_state:/var/lib/techvsoc-agent
+      - /var/log:/host_logs:ro
+    depends_on:
+      - backend
+    networks:
+      - techvsoc
+
+volumes:
+  postgres_data:
+  redis_data:
+  agent_state:
+
+networks:
+  techvsoc:
+    name: techvsoc-network
