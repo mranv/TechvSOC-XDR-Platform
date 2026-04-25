@@ -27,3 +27,6 @@ class User(TimestampMixin, Base):
 
     alerts = relationship("Alert", back_populates="owner")
     notification_channels = relationship("NotificationChannel", back_populates="user")
+    incidents = relationship("Incident", back_populates="assigned_to")
+    soar_actions = relationship("SoarAction", back_populates="executed_by")
+    playbooks = relationship("Playbook", back_populates="created_by")

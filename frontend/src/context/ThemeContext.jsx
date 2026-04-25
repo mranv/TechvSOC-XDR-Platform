@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const STORAGE_KEY = "techvsoc-xdr-theme";
-const themes = ["dark", "light", "cyberpunk"];
+const themes = ["dark", "light", "cyberpunk", "blue-enterprise"];
 
 const ThemeContext = createContext(null);
 

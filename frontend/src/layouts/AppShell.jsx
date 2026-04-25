@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import Sidebar from "../components/navigation/Sidebar";
 import Topbar from "../components/navigation/Topbar";
+import LiveActivityFeed from "../components/live/LiveActivityFeed";
 
 function AppShell() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function AppShell() {
           </div>
         </div>
       </div>
+      <LiveActivityFeed />
     </div>
   );
 }

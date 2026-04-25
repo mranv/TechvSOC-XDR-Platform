@@ -7,6 +7,7 @@ const labels = {
   dark: "Dark",
   light: "Light",
   cyberpunk: "Cyberpunk",
+  "blue-enterprise": "Enterprise",
 };
 
 function ThemeSwitcher() {

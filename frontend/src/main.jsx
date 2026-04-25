@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
+import { LiveProvider } from "./context/LiveContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./styles/index.css";
 
@@ -12,7 +13,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <App />
+          <LiveProvider>
+            <App />
+          </LiveProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

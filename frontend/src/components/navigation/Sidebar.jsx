@@ -4,10 +4,18 @@ import { NavLink } from "react-router-dom";
 
 const links = [
   { to: "/dashboard", label: "Dashboard" },
+  { to: "/incidents", label: "Incidents" },
+  { to: "/cases", label: "Cases" },
+  { to: "/alerts", label: "Alerts" },
   { to: "/logs", label: "Logs" },
-  { to: "/detections", label: "Detections" },
+  { to: "/threat-hunting", label: "Threat Hunting" },
+  { to: "/entities", label: "Entities" },
+  { to: "/endpoints", label: "Endpoints" },
   { to: "/monitoring", label: "Monitoring" },
   { to: "/scanner", label: "Scanner" },
+  { to: "/simulations", label: "Simulations" },
+  { to: "/attack-lab", label: "Attack Lab" },
+  { to: "/automation", label: "Automation" },
   { to: "/settings", label: "Settings" },
 ];
 

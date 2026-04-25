@@ -20,6 +20,7 @@ from app.services.log_service import create_logs_from_payload
 from app.services.log_service import get_log_or_404
 from app.services.log_service import import_logs_from_upload
 from app.services.log_service import search_logs_for_user
+from app.services.queue_service import push_batch_to_queue
 
 router = APIRouter(prefix="/logs")
 
@@ -35,6 +36,23 @@ async def ingest_logs(
     current_user: User = Depends(require_roles(UserRole.ADMIN, UserRole.ANALYST)),
 ) -> list[LogResponse]:
     logs = create_logs_from_payload(db, payload)
+    try:
+        log_dicts = [
+            {
+                "source": log.source,
+                "event_type": log.event_type,
+                "message": log.message,
+                "raw_log": log.raw_log,
+                "severity": str(log.severity),
+                "event_timestamp": log.event_timestamp.isoformat(),
+                "endpoint_id": log.endpoint_id,
+                "metadata_json": log.metadata_json,
+            }
+            for log in logs
+        ]
+        push_batch_to_queue(log_dicts)
+    except Exception:
+        pass
     return [LogResponse.model_validate(item) for item in logs]
 
 
@@ -74,6 +92,8 @@ async def list_logs(
     event_type: str | None = Query(default=None, max_length=255),
     severity: LogLevel | None = Query(default=None),
     endpoint_id: int | None = Query(default=None),
+    ip_address: str | None = Query(default=None, max_length=64),
+    username: str | None = Query(default=None, max_length=128),
     start_time: datetime | None = Query(default=None),
     end_time: datetime | None = Query(default=None),
     skip: int = Query(default=0, ge=0),
@@ -83,9 +103,16 @@ async def list_logs(
         require_roles(UserRole.ADMIN, UserRole.ANALYST, UserRole.VIEWER)
     ),
 ) -> LogListResponse:
+    # Build composite q from ip_address and username if provided
+    composite_q = q or ""
+    if ip_address:
+        composite_q = f"{composite_q} {ip_address}".strip()
+    if username:
+        composite_q = f"{composite_q} {username}".strip()
+
     logs, total = search_logs_for_user(
         db,
-        q=q,
+        q=composite_q or None,
         source=source,
         event_type=event_type,
         severity=severity,

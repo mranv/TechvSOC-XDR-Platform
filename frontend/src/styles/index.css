@@ -75,6 +75,30 @@
   --shadow-glow: 0 0 0 1px rgba(244, 114, 182, 0.16), 0 28px 80px rgba(10, 2, 20, 0.4);
 }
 
+:root[data-theme="blue-enterprise"] {
+  color-scheme: dark;
+  --app-bg: radial-gradient(circle at top, rgba(59, 130, 246, 0.1), transparent 30%),
+    linear-gradient(180deg, #0a1628 0%, #0c1a2e 100%);
+  --surface-sidebar: rgba(8, 20, 40, 0.94);
+  --surface-header: rgba(8, 20, 40, 0.72);
+  --surface-card: rgba(15, 30, 55, 0.88);
+  --surface-overlay: rgba(255, 255, 255, 0.05);
+  --surface-raised: rgba(255, 255, 255, 0.1);
+  --text-primary: #f0f5ff;
+  --text-secondary: #c7d7f5;
+  --text-muted: #7da0d1;
+  --interactive: #3b82f6;
+  --interactive-contrast: #eff6ff;
+  --brand-soft: rgba(59, 130, 246, 0.12);
+  --brand-border: rgba(59, 130, 246, 0.22);
+  --brand-text: #93bbfd;
+  --brand-muted: rgba(147, 187, 253, 0.72);
+  --border-strong: rgba(59, 130, 246, 0.1);
+  --orb-primary: rgba(59, 130, 246, 0.15);
+  --orb-secondary: rgba(96, 165, 250, 0.12);
+  --shadow-glow: 0 0 0 1px rgba(59, 130, 246, 0.1), 0 24px 64px rgba(8, 20, 40, 0.35);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -169,6 +193,91 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: var(--surface-overlay);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.glass-strong {
+  background: var(--surface-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.glass-hover {
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.glass-hover:hover {
+  background: var(--surface-raised);
+  border-color: var(--brand-border);
+}
+
+/* Micro-interactions */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+@keyframes glow-shift {
+  0% { box-shadow: 0 0 12px var(--orb-primary); }
+  50% { box-shadow: 0 0 24px var(--orb-secondary); }
+  100% { box-shadow: 0 0 12px var(--orb-primary); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2.5s ease-in-out infinite;
+}
+
+.animate-glow-shift {
+  animation: glow-shift 3s ease-in-out infinite;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.35s ease-out forwards;
+}
+
+/* ReactFlow Dark Theme Overrides */
+.react-flow {
+  --xy-edge-stroke-default: rgba(255, 255, 255, 0.15);
+  --xy-edge-stroke-selected-default: #22d3ee;
+  --xy-node-border-default: rgba(255, 255, 255, 0.1);
+  --xy-node-border-selected-default: rgba(34, 211, 238, 0.4);
+  --xy-handle-background-color-default: rgba(34, 211, 238, 0.6);
+  --xy-handle-border-color-default: rgba(34, 211, 238, 0.4);
+  --xy-controls-button-background-color-default: rgba(16, 27, 47, 0.85);
+  --xy-controls-button-background-color-hover-default: rgba(255, 255, 255, 0.1);
+  --xy-controls-button-color-default: rgba(255, 255, 255, 0.7);
+  --xy-controls-button-color-hover-default: rgba(255, 255, 255, 0.9);
+  --xy-controls-button-border-color-default: rgba(255, 255, 255, 0.1);
+  --xy-background-color-default: transparent;
+  --xy-background-pattern-color-default: rgba(255, 255, 255, 0.04);
+}
+
+.react-flow__minimap {
+  background-color: rgba(16, 27, 47, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px;
+}
+
+.react-flow__controls-button {
+  border-radius: 8px;
+  margin: 2px;
+}
+
+.react-flow__controls {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 input,

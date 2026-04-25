@@ -63,3 +63,8 @@ class Alert(TimestampMixin, Base):
     log_entry = relationship("LogEntry", back_populates="alerts")
     rule = relationship("DetectionRule", back_populates="alerts")
     owner = relationship("User", back_populates="alerts")
+    incidents = relationship(
+        "Incident",
+        secondary="incident_alert_links",
+        back_populates="alerts",
+    )

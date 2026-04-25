@@ -43,3 +43,26 @@ class ScanStatus(StrEnum):
     RUNNING = "running"
     COMPLETED = "completed"
     FAILED = "failed"
+
+
+class IncidentSeverity(StrEnum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class IncidentStatus(StrEnum):
+    NEW = "new"
+    IN_PROGRESS = "in_progress"
+    INVESTIGATING = "investigating"
+    CONTAINED = "contained"
+    RESOLVED = "resolved"
+    CLOSED = "closed"
+
+
+class SoarActionType(StrEnum):
+    BLOCK_IP = "block_ip"
+    DISABLE_USER = "disable_user"
+    ISOLATE_ENDPOINT = "isolate_endpoint"
+

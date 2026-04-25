@@ -140,6 +140,15 @@ def parse_text_line(line: str, default_source: str) -> LogCreateRequest:
     )
 
 
+def _coerce_severity(value: str | None) -> LogLevel:
+    if not value:
+        return LogLevel.INFO
+    lowered = value.lower()
+    if lowered in LogLevel._value2member_map_:
+        return LogLevel(lowered)
+    return infer_severity(lowered)
+
+
 def parse_uploaded_logs(
     *,
     filename: str,
