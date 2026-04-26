@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -8,6 +10,17 @@ from app.db.session import SessionLocal
 from app.services.detection_service import seed_default_rules
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_database_tables()
+    db = SessionLocal()
+    try:
+        seed_default_rules(db)
+    finally:
+        db.close()
+    yield
+
+
 def create_application() -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
@@ -16,6 +29,7 @@ def create_application() -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url=f"{settings.api_v1_prefix}/openapi.json",
+        lifespan=lifespan,
     )
 
     app.add_middleware(
@@ -27,15 +41,6 @@ def create_application() -> FastAPI:
     )
 
     app.include_router(api_router, prefix=settings.api_v1_prefix)
-
-    @app.on_event("startup")
-    def startup_event() -> None:
-        create_database_tables()
-        db = SessionLocal()
-        try:
-            seed_default_rules(db)
-        finally:
-            db.close()
 
     @app.get("/", tags=["root"])
     async def root() -> dict[str, str]:
