@@ -1,0 +1,10 @@
+# Windows agent build artifacts
+agent/windows/*.exe
+agent/windows/*.obj
+agent/windows/*.res
+agent/windows/*.pdb
+agent/windows/*.ilk
+agent/windows/*.lib
+agent/windows/*.exp
+agent/windows/*.bm
+agent/windows/*.log
