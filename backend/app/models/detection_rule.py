@@ -27,7 +27,7 @@ class DetectionRule(TimestampMixin, Base):
     pattern: Mapped[str] = mapped_column(Text, nullable=False)
     condition_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     severity: Mapped[AlertSeverity] = mapped_column(
-        Enum(AlertSeverity, name="alert_severity"),
+        Enum(AlertSeverity, name="alert_severity", create_type=False),
         default=AlertSeverity.MEDIUM,
         nullable=False,
     )

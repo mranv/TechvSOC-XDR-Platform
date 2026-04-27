@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
@@ -21,8 +23,8 @@ class SoarActionResponse(BaseModel):
     result_json: dict | None
     status: str
     executed_by_id: int | None
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 

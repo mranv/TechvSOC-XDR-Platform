@@ -9,6 +9,7 @@ from datetime import timedelta
 
 from sqlalchemy import or_
 from sqlalchemy import select
+from sqlalchemy import String
 from sqlalchemy.orm import Session
 
 from app.models.alert import Alert
@@ -248,7 +249,7 @@ def get_entity_profile(
             or_(
                 LogEntry.message.ilike(pattern),
                 LogEntry.raw_log.ilike(pattern),
-                LogEntry.metadata_json.cast(str).ilike(pattern),
+                LogEntry.metadata_json.cast(String).ilike(pattern),
             )
         )
         .order_by(LogEntry.event_timestamp.desc())

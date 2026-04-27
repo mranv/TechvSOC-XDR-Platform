@@ -160,7 +160,12 @@ def _build_field_filter(field: str, value: str) -> Callable | None:
         elif mf == "event_type":
             conditions.append(LogEntry.event_type.ilike(f"%{value}%"))
         elif mf == "severity":
-            conditions.append(LogEntry.severity.ilike(value))
+            try:
+                from app.models.enums import LogLevel
+                severity_enum = LogLevel(value.lower())
+                conditions.append(LogEntry.severity == severity_enum)
+            except ValueError:
+                pass
         elif mf == "source":
             conditions.append(LogEntry.source.ilike(f"%{value}%"))
         elif mf in ("message", "raw_log"):
