@@ -3,7 +3,7 @@ setlocal
 
 set CC=cl.exe
 set RC=rc.exe
-set OUT=EventForwardingAggregator.exe
+set OUT=TechvSOCAgent.exe
 set RCFILE=resource.rc
 set ICO=app.ico
 set RES=resource.res
@@ -16,7 +16,7 @@ set LIBS=wevtapi.lib ws2_32.lib winhttp.lib iphlpapi.lib comctl32.lib user32.lib
 
 echo ========================================
 echo  TechvSOC XDR Native Agent - Build v2
-echo  TechvSOC XDR Platform
+echo  Output: TechvSOCAgent.exe
 echo ========================================
 echo.
 

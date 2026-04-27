@@ -1627,21 +1627,33 @@ static BOOL Initialize(HINSTANCE inst)
 
     /* Load configuration */
     if (!LoadConfiguration()) {
-        ShowNotification(NIIF_ERROR, APP_NAME,
-            L"Fatal: Failed to load configuration");
+        MessageBoxW(NULL,
+            L"Fatal: Failed to load event_forwarder.ini.\n"
+            L"Ensure the file exists in the same directory as the executable.",
+            APP_NAME, MB_ICONERROR | MB_OK);
         return FALSE;
     }
 
     if (!InitializeWinsock()) {
+        MessageBoxW(NULL,
+            L"Fatal: Winsock initialization failed.\n"
+            L"Check network configuration and try again.",
+            APP_NAME, MB_ICONERROR | MB_OK);
         return FALSE;
     }
 
     /* Register window class and create message window */
     if (!RegisterWindowClass(inst)) {
+        MessageBoxW(NULL,
+            L"Fatal: Failed to register window class.",
+            APP_NAME, MB_ICONERROR | MB_OK);
         return FALSE;
     }
 
     if (!CreateMessageWindow(inst)) {
+        MessageBoxW(NULL,
+            L"Fatal: Failed to create message window.",
+            APP_NAME, MB_ICONERROR | MB_OK);
         return FALSE;
     }
 
@@ -1661,6 +1673,14 @@ static BOOL Initialize(HINSTANCE inst)
         StringCchPrintfW(msg, 256, L"Monitoring %d event channels",
             g_state.sub_count);
         ShowNotification(NIIF_INFO, APP_NAME, msg);
+    }
+
+    /* Warn if token not configured — HTTP features won't work */
+    if (!g_state.backend_token[0]) {
+        ShowNotification(NIIF_WARNING, APP_NAME,
+            L"Backend token not configured.\n"
+            L"Edit event_forwarder.ini [backend] section.\n"
+            L"Metrics and endpoint registration disabled.");
     }
 
     /* Register endpoint if not already registered */
@@ -1694,8 +1714,8 @@ static BOOL Initialize(HINSTANCE inst)
         g_state.metrics_thread = CreateThread(NULL, 0, MetricsThread, NULL, 0, NULL);
     }
 
-    /* Start log reader thread (only if log files configured and token present) */
-    if (g_state.log_reader_cfg.count > 0 && g_state.backend_token[0]) {
+    /* Start log reader thread (only if log files configured — uses TCP, no token needed) */
+    if (g_state.log_reader_cfg.count > 0) {
         g_state.log_reader_thread = CreateThread(NULL, 0, LogReaderThread, NULL, 0, NULL);
     }
 
